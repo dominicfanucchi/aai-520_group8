@@ -5,7 +5,7 @@ This project is a part of the AAI-511 course in the Applied Artificial Intellige
 
 - ### Partner(s)/Contributor(s)
    * Dominic Fanucchi
-   * 
+   * Nicholas Short
    * 
 
 ## Installation
