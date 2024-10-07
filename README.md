@@ -6,7 +6,7 @@ This project is a part of the AAI-520 course in the Applied Artificial Intellige
 - ### Partner(s)/Contributor(s)
    * Dominic Fanucchi
    * Nicholas Short
-   * Pawa Tahiliani
+   * Pawan Tahiliani
 
 ## Installation
 To use this project, first clone the repo on your device using the command below:
@@ -29,7 +29,6 @@ These algorithms and networks were implemented through Python and Jupyter Notebo
 ### Imports and Libraries
 The project relies on the following libraries and packages:
 * `os` - Provides a way of using operating system-dependent functionality.
-* `csv` - Implements classes to read and write tabular data in CSV format.
 * `warnings` - Provides a way to issue warnings and control their behavior.
 * `numpy` - Fundamental package for numerical computations in Python.
 * `pandas` - Data manipulation and analysis library.
