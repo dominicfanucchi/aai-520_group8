@@ -6,7 +6,7 @@ This project is a part of the AAI-520 course in the Applied Artificial Intellige
 - ### Partner(s)/Contributor(s)
    * Dominic Fanucchi
    * Nicholas Short
-   * 
+   * Pawa Tahiliani
 
 ## Installation
 To use this project, first clone the repo on your device using the command below:
