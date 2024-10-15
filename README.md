@@ -16,7 +16,7 @@ git clone https://github.com/dominicfanucchi/aai-520_group8.git
 ```
 
 ## Project Objective
-**  
+The primary objective of the project is to develop a generative chatbot similar to the ones that are broadly used today, but with the expectation that the level of conversation and ability to train the model will be much more limited. Given the use of one of the three provided datasets the groups main objective was balancing  the ability to converse with the model on a more question and answer basis, with some management of general dialogue and natural human language interaction.  
 
 ## About the Dataset
 
