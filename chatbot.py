@@ -4,9 +4,6 @@ from transformers import pipeline, AutoModelForQuestionAnswering, AutoTokenizer
 import nltk
 nltk.download('punkt')
 
-# file_path = 'the haunted how on willow street.txt'
-# question_path = 'willow street questions.txt'
-
 class Chatbot:
     def __init__(self, model_path):
         # using AutoModel and AutoTokenizer because it detects the correct model
@@ -24,7 +21,13 @@ class Chatbot:
             if file is None:
                 return 'Please upload a file.'
             
-            content = file.read().decode('utf-8')
+            # this should now work with Gradio's file handling
+            if hasattr(file, 'name'):
+                with open(file.name, 'r', encoding='utf-8') as f:
+                    content = f.read()
+            else:
+                content = file.read().decode('utf-8')
+            
             self.context = content
             tokens = self.tokenizer.encode(self.context)
             # checking token length of loaded files and giving the user a 
@@ -38,9 +41,9 @@ class Chatbot:
             
             return f'File loaded successfully. Content length: {len(self.context)} characters.'
         except FileNotFoundError:
-            print(f'Error: The file {file} was not found.')
+            return f'Error: The file was not found.'
         except Exception as e:
-            print(f'An erroroccured while attempting to read the file: {str(e)}')
+            return f'An erroroccured while attempting to read the file: {str(e)}'
 
     def chat(self, user_input):
         if not self.context:
@@ -87,20 +90,6 @@ if __name__ == "__main__":
     model_path = 'my_awesome_qa_model/'
     
     chatbot = Chatbot(model_path)
-    # chatbot.load_context(file_path)
 
     demo = create_gradio_interface(chatbot)
     demo.launch()
-
-    # print("Chatbot: Hello! Feel free to ask me questions.")
-
-    # # after building a working python script, this code will need to be reworked
-    # #  to incorporate Gradio
-    # while True:
-    #     user_input = input("User: ")
-    #     if user_input.lower() in ['exit', 'quit', 'bye']:
-    #         print("Chatbot: Goodbye! I hope you enjoyed our conversation.")
-    #         break
-
-    #     response = chatbot.chat(user_input)
-    #     print(f'Chatbot: {response}')
