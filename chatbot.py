@@ -28,9 +28,9 @@ class Chatbot:
             # the context length can be addressed in future versions of this 
             # chatbot by using other methods to work around DistilBERT's short context length
             if len(tokens) > 512:
-                return f"Warning: The loaded file is {len(tokens)} tokens long, 
-                which exceeds DistilBERT's maximum context length of 512 tokens.
-                The text will be truncated."
+                return (f"Warning: The loaded file is {len(tokens)} tokens long, "
+                        "which exceeds DistilBERT's maximum context length of 512 tokens. "
+                        "The text will be truncated.")
             
             return 'File read successfully.'
         except FileNotFoundError:
@@ -47,12 +47,20 @@ class Chatbot:
             json.dump(self.conversation_history, f)
         return 'Conversation history saved!'
 
+def create_gradio_interface(chatbot):
+    with gr.Blocks(theme=gr.themes.Soft()) as demo:
+        gr.Markdown("Chatbot")
+    return demo
+
 if __name__ == "__main__":
     # possible model folder name change
     model_path = 'my_awesome_qa_model/'
     
     chatbot = Chatbot(model_path)
-    chatbot.load_context(file_path=file_path)
+    chatbot.load_context(file_path)
+
+    demo = create_gradio_interface(chatbot)
+    demo.launch()
 
     print("Chatbot: Hello! Feel free to ask me questions.")
 
