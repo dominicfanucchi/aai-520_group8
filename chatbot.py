@@ -4,8 +4,8 @@ from transformers import pipeline, AutoModelForQuestionAnswering, AutoTokenizer
 import nltk
 nltk.download('punkt')
 
-file_path = 'the haunted how on willow street.txt'
-question_path = 'willow street questions.txt'
+# file_path = 'the haunted how on willow street.txt'
+# question_path = 'willow street questions.txt'
 
 class Chatbot:
     def __init__(self, model_path):
@@ -21,7 +21,11 @@ class Chatbot:
 
     def load_context(self, file):
         try:
-            self.context = file.decode('utf-8')
+            if file is None:
+                return 'Please upload a file.'
+            
+            content = file.read().decode('utf-8')
+            self.context = content
             tokens = self.tokenizer.encode(self.context)
             # checking token length of loaded files and giving the user a 
             # warning if it exceeds the max
@@ -32,13 +36,15 @@ class Chatbot:
                         "which exceeds DistilBERT's maximum context length of 512 tokens. "
                         "The text will be truncated.")
             
-            return 'File read successfully.'
+            return f'File loaded successfully. Content length: {len(self.context)} characters.'
         except FileNotFoundError:
-            print(f'Error: The file {file_path} was not found.')
+            print(f'Error: The file {file} was not found.')
         except Exception as e:
             print(f'An erroroccured while attempting to read the file: {str(e)}')
 
     def chat(self, user_input):
+        if not self.context:
+            return 'Please load a file before asking questions.'
         result = self.question_answerer(question=user_input, context=self.context)
         return result['answer']
     
@@ -46,10 +52,34 @@ class Chatbot:
         with open('conversation_history.json', 'w') as f:
             json.dump(self.conversation_history, f)
         return 'Conversation history saved!'
+    
+def respond(message, chat_history, chatbot):
+    bot_message = chatbot.chat(message)
+    chat_history.append((message, bot_message))
+    chatbot.conversation_history.append({'user': message, 'bot': bot_message})
+
+    if len(chat_history) > 10:
+        chat_history = chat_history[-10]
+    return "", chat_history
 
 def create_gradio_interface(chatbot):
     with gr.Blocks(theme=gr.themes.Soft()) as demo:
         gr.Markdown("Chatbot")
+
+        with gr.Row():
+            with gr.Column(scale=2):
+                chatbot_interface = gr.Chatbot()
+            with gr.Column(scale=1):
+                file_input = gr.File(label='Upload File')
+                file_output = gr.Textbox(label='File Status')
+                msg = gr.Textbox(label='Ask a question about your file', placeholder='Type your question here...')
+                clear = gr.ClearButton([msg, chatbot_interface])
+                save_btn = gr.Button('Save')
+
+        file_input.upload(chatbot.load_context, inputs=[file_input], outputs=[file_output])
+        msg.submit(lambda m, h: respond(m, h, chatbot), inputs=[msg, chatbot_interface], outputs=[msg, chatbot_interface])
+        save_btn.click(chatbot.save_conversation, outputs=[file_output])
+
     return demo
 
 if __name__ == "__main__":
@@ -57,20 +87,20 @@ if __name__ == "__main__":
     model_path = 'my_awesome_qa_model/'
     
     chatbot = Chatbot(model_path)
-    chatbot.load_context(file_path)
+    # chatbot.load_context(file_path)
 
     demo = create_gradio_interface(chatbot)
     demo.launch()
 
-    print("Chatbot: Hello! Feel free to ask me questions.")
+    # print("Chatbot: Hello! Feel free to ask me questions.")
 
-    # after building a working python script, this code will need to be reworked
-    #  to incorporate Gradio
-    while True:
-        user_input = input("User: ")
-        if user_input.lower() in ['exit', 'quit', 'bye']:
-            print("Chatbot: Goodbye! I hope you enjoyed our conversation.")
-            break
+    # # after building a working python script, this code will need to be reworked
+    # #  to incorporate Gradio
+    # while True:
+    #     user_input = input("User: ")
+    #     if user_input.lower() in ['exit', 'quit', 'bye']:
+    #         print("Chatbot: Goodbye! I hope you enjoyed our conversation.")
+    #         break
 
-        response = chatbot.chat(user_input)
-        print(f'Chatbot: {response}')
+    #     response = chatbot.chat(user_input)
+    #     print(f'Chatbot: {response}')
