@@ -89,7 +89,8 @@ def create_gradio_interface(chatbot):
 
         with gr.Row():
             with gr.Column(scale=2):
-                chatbot_interface = gr.Chatbot(type='messages')
+                # chatbot_interface = gr.Chatbot(type='messages')
+                chatbot_interface = gr.Chatbot()
             with gr.Column(scale=1):
                 file_input = gr.File(label='Upload File')
                 file_output = gr.Textbox(label='File Status')
